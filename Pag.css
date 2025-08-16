@@ -1,0 +1,22 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+.hero-overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay oscuro para texto legible sobre imagen */
+    height: 100%;
+}
+
+h1, h2 {
+    font-weight: 700; /* Bold como en City to City */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Azul acento */
+    border: none;
+}
+
+.img-fluid {
+    border-radius: 8px; /* Bordes suaves para imágenes */
+}
