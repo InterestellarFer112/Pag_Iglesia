@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Ecosistema Monterrey - Movimiento del evangelio para transformar la ciudad a través de la multiplicación de iglesias y líderes centrados en Cristo." />
+    <title>Sobre Nosotros - Ecosistema Monterrey</title>
+
+    <!-- Bootstrap & assets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+    <style>
+        :root {
+            --nav-h: 72px; /* valor por defecto; se ajusta con JS */
+            --brand: #007bff;
+            --brand-dark: #0069d9;
+            --bg-primary-light: #e3f2fd;
+        }
+
+        html, body { height: 100%; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            margin: 0;
+            overflow: hidden; /* Evita scroll horizontal/vertical de la página; cada slide tiene su propio scroll interno */
+            background: #000; /* color de fondo por si no carga la imagen */
+        }
+
+        /* NAVBAR */
+        .navbar { background: rgba(0,0,0,0.8); backdrop-filter: saturate(120%) blur(6px); }
+        .navbar-brand { font-weight: 700; }
+        .navbar .nav-link { color: #fff; }
+        .navbar .nav-link:hover, .navbar .nav-link.active { color: var(--brand); }
+
+        /* SUBNAV de secciones (píldoras) */
+        .section-pills {
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        .section-pills .nav-link { color: #fff; border-radius: 999px; }
+        .section-pills .nav-link.active { background: var(--brand); }
+
+        /* CONTENEDOR DE SLIDES (carrusel tipo presentación) */
+        .slides-wrapper {
+            position: fixed;
+            top: var(--nav-h);
+            left: 0;
+            right: 0;
+            height: calc(100vh - var(--nav-h));
+            overflow: hidden;
+            background: #111;
+        }
+        .slides {
+            display: flex;
+            height: 100%;
+            will-change: transform;
+            transition: transform 0.7s ease-in-out;
+        }
+        .slide {
+            min-width: 100vw;
+            height: 100%;
+            overflow-y: auto; /* permite scroll del contenido dentro de cada slide */
+            -webkit-overflow-scrolling: touch;
+            background: #fff; /* fondo por defecto de cada slide */
+        }
+
+        /* Hero (primer slide) con imagen de fondo a pantalla completa */
+        .hero-slide {
+            position: relative;
+            background: url('imagen-monterrey.jpg') center/cover no-repeat fixed;
+            color: #fff;
+        }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 2rem;
+        }
+        .hero-overlay h1 { font-weight: 800; }
+        .hero-overlay .btn-primary {
+            background-color: var(--brand); border: none; transition: all 0.3s ease; }
+        .hero-overlay .btn-primary:hover { background-color: var(--brand-dark); transform: translateY(-2px); }
+
+        /* Estilos originales (con ligeros ajustes) */
+        h1, h2 { font-weight: 700; }
+        .img-fluid { border-radius: 8px; }
+        section.section-block { padding: 60px 0; }
+        .section-title { text-transform: uppercase; font-weight: bold; margin-bottom: 30px; color: #2c3e50; }
+        .values-list li { margin-bottom: 15px; position: relative; padding-left: 30px; }
+        .values-list li:before { content: '•'; color: var(--brand); font-weight: bold; font-size: 1.2em; position: absolute; left: 10px; }
+        .quote { font-style: italic; border-left: 4px solid var(--brand); padding-left: 20px; margin: 20px 0; color: #555; }
+        .card { transition: transform 0.3s ease; border: none; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); }
+        .timeline { position: relative; padding-left: 50px; max-width: 800px; margin: 0 auto; }
+        .timeline:before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--brand); }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-year { position: absolute; left: -50px; top: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .bg-primary-light { background-color: var(--bg-primary-light); }
+        .stat-number { font-size: 3rem; font-weight: bold; color: var(--brand); }
+        .stat-label { text-transform: uppercase; font-size: 0.9rem; color: #666; }
+
+        /* Botones de navegación izquierda/derecha */
+        .nav-arrow {
+            position: fixed;
+            top: calc(var(--nav-h) + 50%);
+            transform: translateY(-50%);
+            z-index: 1050;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            border: none;
+            width: 44px; height: 44px; border-radius: 50%;
+            display: grid; place-items: center;
+            cursor: pointer;
+        }
+        .nav-arrow:hover { background: rgba(0,0,0,0.8); }
+        .nav-arrow.left { left: 10px; }
+        .nav-arrow.right { right: 10px; }
+
+        /* Accesibilidad visual para foco */
+        .nav-arrow:focus-visible, .section-pills .nav-link:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+        /* Footer ocupa su propio bloque dentro del último slide */
+        footer { background: #111; color: #fff; }
+        footer a { color: #fff; }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Ecosistema Monterrey",
+      "url": "https://www.ecosistemamonterrey.org",
+      "logo": "https://www.ecosistemamonterrey.org/logo.jpg",
+      "description": "Movimiento del evangelio para transformar Monterrey"
+    }
+    </script>
+</head>
+<body>
+    <!-- NAVBAR (principal + subpíldoras para saltar entre slides) -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand" href="index.html">Ecosistema Monterrey</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Sobre Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#recursos">Recursos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#slide-contacto" data-slide="9">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- Subnav de secciones (píldoras) -->
+        <div class="border-top border-secondary px-2 py-2 section-pills bg-dark">
+            <ul class="nav nav-pills flex-nowrap align-items-center small">
+                <li class="nav-item"><a class="nav-link active" href="#" data-slide="0">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="1">Visión & Misión</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="2">Valores & ¿Por qué?</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="3">Objetivos & Ecosistema</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="4">Organizaciones & Iglesias</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="5">Liderazgo & Testimonios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="6">Progreso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="7">Eventos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="8">Galería</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-slide="9">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- WRAPPER DE SLIDES -->
+    <div class="slides-wrapper">
+        <div class="slides" id="slides">
+            <!-- SLIDE 0: HERO -->
+            <section class="slide hero-slide" id="slide-hero" aria-label="Inicio">
+                <div class="hero-overlay">
+                    <div class="container">
+                        <h1 class="display-4 fw-bold">Ecosistema Monterrey</h1>
+                        <p class="lead mb-4">Un movimiento del evangelio para transformar la ciudad.</p>
+                        <a href="#" class="btn btn-primary btn-lg px-4" data-slide="9">Únete al movimiento</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 1: Visión + Misión + Stats -->
+            <section class="slide bg-white" id="slide-vision-mision" aria-label="Visión y Misión">
+                <div class="container py-5">
+                    <section id="vision" class="section-block">
+                        <h2 class="text-center section-title">Visión</h2>
+                        <p class="text-center lead">Ver un movimiento multiplicador del evangelio para traer transformación y esperanza a Monterrey.</p>
+                    </section>
+                    <section id="mision" class="section-block bg-light rounded-3 p-4">
+                        <h2 class="text-center section-title">Misión</h2>
+                        <p class="text-center">Servir a la ciudad de Monterrey proveyendo y desarrollando herramientas y estrategias en colaboración para la multiplicación de iglesias, líderes y organizaciones a través de un ecosistema del evangelio para experimentar transformación social, cultural y espiritual de la ciudad.</p>
+                    </section>
+                    <section id="stats" class="section-block py-5 bg-primary-light rounded-3">
+                        <div class="container">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-4">
+                                    <div class="stat-number">16+</div>
+                                    <div class="stat-label">Iglesias</div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <div class="stat-number">8</div>
+                                    <div class="stat-label">Organizaciones</div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <div class="stat-number">5</div>
+                                    <div class="stat-label">Denominaciones</div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <div class="stat-number">2030</div>
+                                    <div class="stat-label">Objetivos Para el</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: Valores + ¿Por qué Monterrey? -->
+            <section class="slide bg-light" id="slide-valores-porque" aria-label="Valores y Por qué Monterrey">
+                <div class="container py-5">
+                    <section id="valores" class="section-block">
+                        <h2 class="text-center section-title">Valores / ADN</h2>
+                        <ul class="values-list mx-auto" style="max-width: 700px;">
+                            <li>Centralidad en el evangelio.</li>
+                            <li>Multi-denominacional</li>
+                            <li>Enfocados en ministerio urbano.</li>
+                            <li>Multiplicación de iglesias</li>
+                            <li>Unidad y colaboración generosa.</li>
+                            <li>Desarrollo de liderazgo emprendedor.</li>
+                            <li>Renovación constante en el evangelio.</li>
+                        </ul>
+                    </section>
+                    <section id="porque-monterrey" class="section-block bg-white rounded-3 p-4">
+                        <h2 class="text-center section-title">¿Por qué Monterrey?</h2>
+                        <p>La ciudad de Monterrey es la segunda ciudad más relevante y de mayor influencia en México. La ciudad tiene renombre en ambientes internacionales posicionándose como una de las 10 ciudades más desarrolladas de América Latina. Es una ciudad formada por una mentalidad emprendedora, alta educación universitaria, desarrollo de grandes empresas nacionales y globales y con comunicaciones terrestres y aéreas muy preponderantes.</p>
+                        <p>Así mismo es una ciudad con iglesias insuficientes y poca participación social, con un alto número de personas afectadas por drogas, un flujo de migración centro y sud americano, cinco universidades internacionales, 22% de habitantes sin servicios médicos y con un creciente grado de desintegración familiar.</p>
+                        <p>Todo esto hace de Monterrey una gran oportunidad no solo para ofrecer el evangelio a esta ciudad sino que de un movimiento multiplicador de iglesias urbanas y del evangelio, este se multiplique hacia otras ciudades del norte de México y sur de los Estados Unidos.</p>
+                        <div class="quote">
+                            <p>“En la forma en que se mueven las ciudades, se mueven los países”</p>
+                            <p class="text-end">— Tim Keller</p>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: Objetivos 2030 + ¿Qué es un Ecosistema? -->
+            <section class="slide bg-white" id="slide-objetivos-ecosistema" aria-label="Objetivos y Ecosistema del Evangelio">
+                <div class="container py-5">
+                    <section id="objetivos" class="section-block">
+                        <h2 class="text-center section-title">Objetivos 2030</h2>
+                        <p class="text-center mb-4">Después de realizar un estudio demográfico y etnográfico exhaustivo, habiendo encontrado cuales son los elementos de "dolor" de Monterrey, como red colaborativa Ecosistema Monterrey, nos hemos propuesto estos objetivos:</p>
+                        <ul class="values-list mx-auto" style="max-width: 800px;">
+                            <li>Desarrollo de iniciativas para el liderazgo cultural, universitario y emprendedor con principios del evangelio.</li>
+                            <li>Desarrollar un centro de atención para los migrantes que trabaje en conjunto con otros centros y con el gobierno de la ciudad.</li>
+                            <li>Plantar directamente cinco nuevas iglesias y renovar otras cinco en la centralidad del evangelio.</li>
+                            <li>Establecer iniciativas para el desarrollo para la familia y la salud.</li>
+                            <li>Fomentar la unidad y colaboración en la iglesia cristiana evangélica impulsando un ADN centrado en el evangelio y con una visión hacia el florecimiento de la ciudad.</li>
+                        </ul>
+                    </section>
+                    <section id="ecosistema" class="section-block bg-light rounded-3 p-4">
+                        <h2 class="text-center section-title">¿Qué es un Ecosistema del Evangelio?</h2>
+                        <p>Un ecosistema del evangelio es un conjunto de iglesias, líderes y organizaciones que comparten una misma visión, misión, principios misionales y objetivos para colaborar en unidad desarrollando esta visión para la gloria de Cristo y el florecimiento de nuestra ciudad.</p>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Organizaciones + Iglesias -->
+            <section class="slide bg-light" id="slide-organizaciones-iglesias" aria-label="Organizaciones e Iglesias">
+                <div class="container py-5">
+                    <section id="organizaciones" class="section-block">
+                        <h2 class="text-center section-title">Organizaciones Colaboradoras</h2>
+                        <p>Las organizaciones con las que contamos son aquellas que nos ayudan a desarrollar los objetivos planteados por el ecosistema para florecer nuestra ciudad y establecer un sistema de apoyo para nuestras iglesias.</p>
+                        <div class="row mt-4">
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-building" style="font-size: 2rem; color: var(--brand);"></i>
+                                        <h4 class="mt-3">CITY TO CITY</h4>
+                                        <p>Entrenamiento, Coaching, Evaluación, Fe y Trabajo, Justicia y misericordia y Plantación de iglesias.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-people-fill" style="font-size: 2rem; color: var(--brand);"></i>
+                                        <h4 class="mt-3">PARAKALEO</h4>
+                                        <p>Entrenamiento y acompañamiento de esposas.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-mortarboard" style="font-size: 2rem; color: var(--brand);"></i>
+                                        <h4 class="mt-3">CAMPUS OUTREACH</h4>
+                                        <p>Evangelización y discipulado universitario.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="iglesias" class="section-block bg-white rounded-3 p-4">
+                        <h2 class="text-center section-title">Iglesias Participantes</h2>
+                        <p>Una característica de un ecosistema del evangelio es que lo integran una familia de iglesias de diferentes denominaciones, tamaños, estilos de adoración pero con una línea teológica centrada en Cristo y su evangelio.</p>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <ul class="values-list">
+                                    <li>San Pedro Church (San Pedro)</li>
+                                    <li>Cumbres del Rey (Cumbres)</li>
+                                    <li>Familia de Fe (Guadalupe)</li>
+                                    <li>Central (Monterrey)</li>
+                                    <li>Nucleo (Monterrey)</li>
+                                    <li>Vida Nueva (Garcia)</li>
+                                    <li>Ciudad Esperanza (Garcia)</li>
+                                    <li>Pasion (Monterrey)</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="values-list">
+                                    <li>Vida Abundante (Monterrey)</li>
+                                    <li>Arbol de Vida (San Nicolas)</li>
+                                    <li>Ebenezer (Garcia)</li>
+                                    <li>Jesucristo es mi refugio (Santa Catarina)</li>
+                                    <li>La Viña (Monterrey)</li>
+                                    <li>Pasion por Cristo (Linares)</li>
+                                    <li>Pilar (Monterrey)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: Liderazgo + Testimonios -->
+            <section class="slide bg-white" id="slide-liderazgo-testimonios" aria-label="Liderazgo y Testimonios">
+                <div class="container py-5">
+                    <section id="liderazgo" class="section-block">
+                        <h2 class="text-center section-title">Nuestro Equipo</h2>
+                        <div class="row text-center mt-4">
+                            <div class="col-md-4 mb-4">
+                                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" width="150" alt="Líder">
+                                <h4>Nombre Apellido</h4>
+                                <p class="text-muted">Director Ejecutivo</p>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" width="150" alt="Líder">
+                                <h4>Nombre Apellido</h4>
+                                <p class="text-muted">Coordinador de Plantación</p>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" width="150" alt="Líder">
+                                <h4>Nombre Apellido</h4>
+                                <p class="text-muted">Coordinador de Capacitación</p>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="testimonios" class="section-block bg-light py-5 rounded-3">
+                        <div class="container">
+                            <h2 class="text-center section-title">Historias de Transformación</h2>
+                            <div class="row mt-4">
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <p class="quote">"Cómo el ecosistema transformó mi comunidad..."</p>
+                                            <p>- El Paco</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <p class="quote">"Gracias al apoyo del ecosistema, nuestra iglesia pudo renovarse..."</p>
+                                            <p>- El Jose</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <p class="quote">"El entrenamiento recibido cambió completamente mi ministerio..."</p>
+                                            <p>- El Adrian</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: Progreso (línea de tiempo) -->
+            <section class="slide bg-light" id="slide-progreso" aria-label="Progreso">
+                <div class="container py-5">
+                    <section id="progreso" class="section-block">
+                        <h2 class="text-center section-title">Nuestro Progreso</h2>
+                        <div class="timeline mt-4">
+                            <div class="timeline-item">
+                                <div class="timeline-year">2020</div>
+                                <div class="timeline-content">
+                                    <h4>Fundación del Ecosistema</h4>
+                                    <p>Iniciamos con 5 iglesias colaborando</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-year">2021</div>
+                                <div class="timeline-content">
+                                    <h4>Primera Conferencia Anual</h4>
+                                    <p>Reunimos a 150 líderes de la ciudad</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-year">2022</div>
+                                <div class="timeline-content">
+                                    <h4>Primera Iglesia Plantada</h4>
+                                    <p>Nueva congregación en zona estratégica</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-year">2023</div>
+                                <div class="timeline-content">
+                                    <h4>Alianza con City to City</h4>
+                                    <p>Formación estratégica para plantadores</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: Eventos -->
+            <section class="slide bg-primary text-white" id="slide-eventos" aria-label="Eventos">
+                <div class="container py-5">
+                    <section id="eventos" class="section-block">
+                        <h2 class="text-center section-title">Próximos Eventos</h2>
+                        <div class="row mt-4">
+                            <div class="col-md-4 mb-4">
+                                <div class="card bg-dark text-white h-100">
+                                    <div class="card-body">
+                                        <h4>Conferencia Anual 2024</h4>
+                                        <p><i class="bi bi-calendar"></i> 15-17 Noviembre</p>
+                                        <p><i class="bi bi-geo-alt"></i> Centro de Convenciones</p>
+                                        <a href="#" class="btn btn-outline-light mt-2">Más información</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card bg-dark text-white h-100">
+                                    <div class="card-body">
+                                        <h4>Taller de Plantación</h4>
+                                        <p><i class="bi bi-calendar"></i> 10 Enero</p>
+                                        <p><i class="bi bi-geo-alt"></i> Iglesia Central</p>
+                                        <a href="#" class="btn btn-outline-light mt-2">Más información</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card bg-dark text-white h-100">
+                                    <div class="card-body">
+                                        <h4>Retiro de Líderes</h4>
+                                        <p><i class="bi bi-calendar"></i> 5-7 Marzo</p>
+                                        <p><i class="bi bi-geo-alt"></i> Sierra Madre</p>
+                                        <a href="#" class="btn btn-outline-light mt-2">Más información</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: Galería -->
+            <section class="slide bg-white" id="slide-galeria" aria-label="Galería">
+                <div class="container py-5">
+                    <section id="galeria" class="section-block">
+                        <h2 class="text-center section-title">Galería</h2>
+                        <div class="row g-3 mt-4">
+                            <div class="col-md-4"><img src="https://via.placeholder.com/400x300" class="img-fluid rounded" alt="Evento"></div>
+                            <div class="col-md-4"><img src="https://via.placeholder.com/400x300" class="img-fluid rounded" alt="Evento"></div>
+                            <div class="col-md-4"><img src="https://via.placeholder.com/400x300" class="img-fluid rounded" alt="Evento"></div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: Contacto + Documento + Footer -->
+            <section class="slide bg-light" id="slide-contacto" aria-label="Contacto">
+                <div class="container py-5">
+                    <section id="contacto" class="section-block">
+                        <h2 class="text-center section-title">¿Quieres unirte?</h2>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="mensaje" class="form-label">Mensaje</label>
+                                        <textarea class="form-control" id="mensaje" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Enviar</button>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Información de contacto</h4>
+                                <p><i class="bi bi-envelope"></i> contacto@ecosistemamonterrey.org</p>
+                                <p><i class="bi bi-telephone"></i> +52 81 1555 9403</p>
+                                <p><i class="bi bi-geo-alt"></i> Av. Principal #123, Monterrey, N.L.</p>
+                                <div class="mt-4">
+                                    <h4>Síguenos</h4>
+                                    <a href="#" class="text-dark me-3"><i class="bi bi-facebook" style="font-size: 1.5rem;"></i></a>
+                                    <a href="#" class="text-dark me-3"><i class="bi bi-instagram" style="font-size: 1.5rem;"></i></a>
+                                    <a href="#" class="text-dark"><i class="bi bi-youtube" style="font-size: 1.5rem;"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="documento" class="section-block text-center">
+                        <h2 class="section-title">Documento Completo</h2>
+                        <p>Para más detalles, descarga nuestro documento estratégico:</p>
+                        <a href="Ecosistema_Monterrey_updated.pdf" class="btn btn-primary" download>
+                            <i class="bi bi-download"></i> Descargar PDF
+                        </a>
+                    </section>
+
+                    <footer class="text-center py-4 rounded-3 mt-4">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <h5>Ecosistema Monterrey</h5>
+                                    <p class="small">Movimiento del evangelio para transformar la ciudad.</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <h5>Enlaces rápidos</h5>
+                                    <ul class="list-unstyled">
+                                        <li><a href="index.html" class="text-white">Inicio</a></li>
+                                        <li><a href="#" class="text-white" data-slide="0">Sobre Nosotros</a></li>
+                                        <li><a href="#" class="text-white" data-slide="9">Contacto</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <h5>Contacto</h5>
+                                    <p class="small mb-1"><i class="bi bi-envelope"></i> contacto@ecosistemamonterrey.org</p>
+                                    <p class="small"><i class="bi bi-telephone"></i> +52 81 1555 9403</p>
+                                </div>
+                            </div>
+                            <hr class="my-3" />
+                            <p class="mb-1">&copy; 2024 Ecosistema Monterrey. Todos los derechos reservados.</p>
+                            <p class="small">Diseñado con <i class="bi bi-heart-fill text-danger"></i> para la gloria de Cristo</p>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Flechas de navegación -->
+    <button class="nav-arrow left" id="arrowPrev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+    <button class="nav-arrow right" id="arrowNext" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Lógica del carrusel de slides -->
+    <script>
+        (function(){
+            const navbar = document.querySelector('.navbar');
+            const slidesEl = document.getElementById('slides');
+            const slideNodes = Array.from(document.querySelectorAll('.slide'));
+            const pills = Array.from(document.querySelectorAll('[data-slide]'));
+            const btnPrev = document.getElementById('arrowPrev');
+            const btnNext = document.getElementById('arrowNext');
+            let current = 0;
+
+            // Ajusta variable CSS con altura real del navbar
+            function updateNavHeight(){
+                const h = navbar.offsetHeight;
+                document.documentElement.style.setProperty('--nav-h', h + 'px');
+            }
+            updateNavHeight();
+            window.addEventListener('resize', updateNavHeight);
+
+            function goToSlide(index){
+                const max = slideNodes.length - 1;
+                current = Math.max(0, Math.min(index, max));
+                slidesEl.style.transform = `translateX(-${current * 100}vw)`;
+                // Actualiza estado activo en píldoras
+                pills.forEach(a => {
+                    const i = parseInt(a.getAttribute('data-slide'), 10);
+                    if (!isNaN(i)) {
+                        a.classList.toggle('active', i === current);
+                        a.setAttribute('aria-current', i === current ? 'true' : 'false');
+                    }
+                });
+            }
+
+            // Click en píldoras / enlaces con data-slide
+            pills.forEach(a => {
+                a.addEventListener('click', (e) => {
+                    const i = parseInt(a.getAttribute('data-slide'), 10);
+                    if (!isNaN(i)) { e.preventDefault(); goToSlide(i); }
+                });
+            });
+
+            // Flechas
+            btnPrev.addEventListener('click', () => goToSlide(current - 1));
+            btnNext.addEventListener('click', () => goToSlide(current + 1));
+
+            // Teclado
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') goToSlide(current + 1);
+                if (e.key === 'ArrowLeft') goToSlide(current - 1);
+            });
+
+            // Swipe táctil
+            let x0 = null; let y0 = null;
+            function unify(e){ return e.changedTouches ? e.changedTouches[0] : e; }
+            document.addEventListener('touchstart', (e) => { const t = unify(e); x0 = t.clientX; y0 = t.clientY; }, {passive:true});
+            document.addEventListener('touchend', (e) => {
+                const t = unify(e); if (x0 === null) return; const dx = t.clientX - x0; const dy = t.clientY - y0; x0 = y0 = null;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+                    if (dx < 0) goToSlide(current + 1); else goToSlide(current - 1);
+                }
+            }, {passive:true});
+
+            // Ir al primer slide al cargar
+            goToSlide(0);
+        })();
+    </script>
+</body>
+</html>
